@@ -22,7 +22,9 @@ class MatrizOperations
             . ' insertadas en el formato ( x1 x2 z1 x2 y2 z2). El error está en la linea '
         ],
         '5' => [
-            'Mensaje' => ''
+            'Mensaje' => 'Error: El tamaño de la matriz no se puede ser superior a 100 ó el número de operaciones'
+            . ' no puede ser superior a 1000.'
+            . ' El error está en la linea '
         ]
         
     ];
@@ -60,32 +62,43 @@ class MatrizOperations
             $datosCompletos[] = explode(' ', $datos[$x]);
         }
         
-        
         foreach ($datosCompletos as $index => $data)
         {
             
             
             
-            //validación de datos a través de la función validarDatos() -- Se hace para cada linea de forma
-            //individual
-            
-            
-            
-            //si no hay errores continua
-            //condicionales para indicar cuando hay que realizar queries, updates o crear matrices nuevas
+             
             if(!in_array('QUERY', $data) && !in_array('UPDATE', $data))
             {
-                $this->crearMatriz($datosCompletos[$index][0]);
-            }
-            elseif (in_array('UPDATE', $data)) 
+                //validación de datos a través de la función validarDatos() -- Se hace para cada linea de forma
+                //individual 
+                //si cumple los parámetros establecidos se crear la matriz, de lo contrario devuelve el error
+                if($this->validarTamanoMatrizOperaciones($datosCompletos[$index][0] , $datosCompletos[$index][1]))
+                {
+                    $mensaje = $this->encontrarMensajeError('5');
+                    $posicion = $index + 2;
+                    $resultados[] = $mensaje['Mensaje'] . $posicion ;
+                    return $resultados;
+                }
+                else{
+                    $this->crearMatriz($datosCompletos[$index][0]);
+                    
+                }
+                
+            } 
+            
+            
+            if (in_array('UPDATE', $data)) 
             {
                 $resultados[] = $this->actualizarMatriz($datosCompletos[$index][1], $datosCompletos[$index][2], $datosCompletos[$index][3], $datosCompletos[$index][4]);
             }
+
             elseif (in_array('QUERY', $data))
-            {   
+            {  
                 $resultados[] = $this->consultarSumaMatriz($datosCompletos[$index][1], $datosCompletos[$index][2], $datosCompletos[$index][3], 
                         $datosCompletos[$index][4], $datosCompletos[$index][5], $datosCompletos[$index][6]);                
             }
+            
             
         }
         //se eliminar del arreglo de resultados los indices que tienen valores vacios a excepción de los ceros
@@ -112,7 +125,7 @@ class MatrizOperations
         
     }
     
-    //buscador de mensajes
+    //buscador de mensajes de error
     private function encontrarMensajeError($id)
     {
         return self::$mensajeError[$id];
@@ -121,17 +134,25 @@ class MatrizOperations
 
 
 
-    //función para validar los datos de entrada del formulario principal - esta función
-    //recibe los datos de una linea cada linea de manera individual
-    private function validarDatos($input)
+    //funciones para validar los datos de entrada del formulario principal - estas funciones
+    //reciben los datos de una linea cada linea de manera individual
+    //se encargan de validar
+    //1- Tamano de la matriz < 100
+    //2- Número de operaciones < 1000
+    //3- La segunda coordenada del query debe ser mayor o igual a la primera
+    //4- Las coordenadas del query deben ser mayor a 1 y menores o igual que el tamaño del array
+    //5- Las coordenadas del update deben ser mayor o igual a 1 y menos o igual que el tamaño del array
+    
+    private function validarTamanoMatrizOperaciones($tamanoMatriz , $tamanoOperaciones)
     {
-        
+        if($tamanoMatriz > 100 || $tamanoOperaciones > 1000)
+        {
+            return true;
+        }
+        return false;
     }
-
-
-
-
-
+    
+    
 
 
     //función para crear una matriz tridimensional a partir de una tamaño indicado
