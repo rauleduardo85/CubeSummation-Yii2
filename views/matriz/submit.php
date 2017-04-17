@@ -23,7 +23,6 @@ use yii\widgets\ActiveForm;
         echo '<textarea cols="50" rows="10" readonly="readonly" style="white-space: pre-line;" wrap="hard">';
         if(isset($model->output))
         {
-            $model->output = array_filter($model->output);
             foreach ($model->output as $md)
             {
                 echo $md."\n";

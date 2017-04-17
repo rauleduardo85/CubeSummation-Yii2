@@ -21,6 +21,7 @@ class MatrizController extends Controller
             echo '<br>';echo '<br>';echo '<br>';echo '<br>';
             $datos = implode('/', $model->getAttributes(['input']));
             $resultado = $matrizOp->controlDatos($datos) ;
+            $resultado = array_filter($resultado , 'strlen');
             $model->setAttributes(['output' => $resultado]);
         }             
             
