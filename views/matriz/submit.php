@@ -18,7 +18,7 @@ use yii\widgets\ActiveForm;
 <?php ActiveForm::end(); ?>
 
 <div class="row">
-    <div class="form">
+    <div class="col-lg-12">
         <?php
         echo '<textarea cols="50" rows="10" readonly="readonly" style="white-space: pre-line;" wrap="hard">';
         if(isset($model->output))

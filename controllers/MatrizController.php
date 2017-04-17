@@ -18,7 +18,6 @@ class MatrizController extends Controller
         if($model->load(Yii::$app->request->post()) && $model->validate())
         {
             $matrizOp = new MatrizOperations();
-            echo '<br>';echo '<br>';echo '<br>';echo '<br>';
             $datos = implode('/', $model->getAttributes(['input']));
             $resultado = $matrizOp->controlDatos($datos) ;
             $resultado = array_filter($resultado , 'strlen');

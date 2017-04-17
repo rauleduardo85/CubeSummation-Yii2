@@ -15,25 +15,27 @@ class MatrizOperations
         ],
         '3' => [
             'Mensaje' => 'Error en la función UPDATE, las coordenadas deben ser'
-            . ' insertadas en el formato  ( x y z valor ). El error está en la linea '            
+            . ' insertadas en el formato  (UPDATE x y z valor ). El error está en la linea '            
         ],
         '4' => [
             'Mensaje' => 'Error en la función QUERY, las coordenadas deben ser'
-            . ' insertadas en el formato ( x1 x2 z1 x2 y2 z2). El error está en la linea '
+            . ' insertadas en el formato (QUERY x1 x2 z1 x2 y2 z2). El error está en la linea '
         ],
         '5' => [
-            'Mensaje' => 'Error: El tamaño de la matriz no se puede ser superior a 100, ni inferior a 1 ó '
+            'Mensaje' => 'Error: El tamaño de la matriz no se puede ser superior a 100, ni inferior a 1, ó '
             . 'el número de operaciones no puede ser superior a 1000 ni menor a 1.'
             . ' El error está en la linea '
         ],
         '6' => [
             'Mensaje' => 'Error: Las coordenadas de la función UPDATE no deben ser superiores al '
             . 'tamaño de la matriz, ni menores a 0. Los valores de update no deben ser superiores'
-            . ' a 10^9 ni menores a -10^9. El error está en la linea '
+            . ' a 10^9 ni menores a -10^9. Los datos ingresados deben ser números enteros. '
+            . 'El error está en la linea '
         ],
         '7' => [
             'Mensaje' => 'Error: las coordenadas iniciales no deben ser mayores a las coordenadas finales, ni '
-            . 'mayores al tamaño de la matriz. El error está en la linea '
+            . 'mayores al tamaño de la matriz. '
+            . 'El error está en la linea '
         ]
         
     ];
@@ -88,7 +90,7 @@ class MatrizOperations
             {
                 //validación de datos a través de la función validarDatos() -- Se hace para cada linea de forma
                 //individual 
-                //si cumple los parámetros establecidos se crear la matriz, de lo contrario devuelve el error
+                //si cumple los parámetros establecidos se crear la matriz, de lo contrario devuelve el error                
                 if($this->validarTamanoMatrizOperaciones($datosCompletos[$index][0], $datosCompletos[$index][1]))
                 {
                     
@@ -108,14 +110,23 @@ class MatrizOperations
             
             if (in_array('UPDATE', $data)) 
             {
-                //validación de datos para cuando el usuario ejecuta la función update
                 
                 
+                 //validación de tamaño de parámetros para el método de update
+                if(count($data) < 5)
+                {
+                    $mensaje = $this->encontrarMensajeError('3');
+                    $posicion = $index + 2;
+                    $resultados[] = $mensaje['Mensaje'] . $posicion ;
+                    return $resultados;
+                }
+                
+                
+                //validación de parámetros para el método de query
                 if($this->validarUpdate((int)$datosCompletos[$index][1], (int)$datosCompletos[$index][2], (int)$datosCompletos[$index][3], 
-                        (int)$tamanoMatriz, $datosCompletos[$index][4]))
-                {  
-                    
-                    
+                        (int)$tamanoMatriz, (int)$datosCompletos[$index][4]))
+                {                      
+                                        
                     $mensaje = $this->encontrarMensajeError('6');
                     $posicion = $index + 2;
                     $resultados[] = $mensaje['Mensaje'] . $posicion ;
@@ -131,7 +142,17 @@ class MatrizOperations
             elseif (in_array('QUERY', $data))
             {  
                 
-                if($this->validarQuery((int)$datosCompletos[$index][1], (int)$datosCompletos[$index][2], (int)$datosCompletos[$index][3], 
+                //validación de tamaño de parámetros para el método de query
+                if(count($data) < 7)
+                {
+                    $mensaje = $this->encontrarMensajeError('3');
+                    $posicion = $index + 2;
+                    $resultados[] = $mensaje['Mensaje'] . $posicion ;
+                    return $resultados;
+                }
+                
+                //validación de inserción de datos
+                    if($this->validarQuery(intval($datosCompletos[$index][1]), (int)$datosCompletos[$index][2], (int)$datosCompletos[$index][3], 
                         (int)$datosCompletos[$index][4], (int)$datosCompletos[$index][5], (int)$datosCompletos[$index][6] , (int)$tamanoMatriz))
                 { 
                     
@@ -188,7 +209,7 @@ class MatrizOperations
     //lista validaciones
     //funciones para validar los datos de entrada del formulario principal - estas funciones
     //reciben los datos de una linea cada linea de manera individual
-    //se encargan de validar
+    //se encargan de validar que se ingresen los datos en el formato correcto
     //1- Tamano de la matriz < 100
     //2- Número de operaciones < 1000
     //3- La segunda coordenada del query debe ser mayor o igual a la primera
@@ -209,10 +230,10 @@ class MatrizOperations
     //función que abarca el punto 5 de la "lista validaciones"
     private function validarUpdate($x, $y, $z, $tamanoMatriz, $valor)
     {
-        \var_dump($valor);
         if(($x > $tamanoMatriz || $x < 1) 
                 || ($y > $tamanoMatriz || $y < 1) 
-                || ($z > $tamanoMatriz || $z < 1) || ($valor > 10E+9 || $valor < -10E+9))
+                || ($z > $tamanoMatriz || $z < 1) || ($valor > 10E+9 || $valor < -10E+9)  
+                )
         {
             return true;
         }
